@@ -63,16 +63,16 @@ paths:
             type: string
       responses: 
         '200':
-          description: all active devices
+          description: Creates an order on the receiving box 
+            and an order on the sending box. 
+            If the reciever or sending box is empty that is assumed to be a human sender/receiver
           content:
             application/json:
               schema:
                 properties:
-                  active_devices: 
-                    type: array
-                    items:
-                      type: string
-                    example: [Barrington Device 1, Barrington Device 2, Shaumberg Device 1,]
+                  auth_code: 
+                    type: string
+                    
 
 
 
