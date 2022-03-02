@@ -7,12 +7,12 @@ schemes: [ "http" ]
 paths: 
   /getAuthToken: 
     get: 
-      summary: Returns authentication token for a given user
+      summary: Returns authentication token for a given email
       operationId: getAuthToken
       parameters: 
       - in: body
         required: true
-        description: "Payload describing which user to get authentication token for. \"sub\" parameter is type of user, which is classified as 1212 for client and 9898 for admin"
+        description: "Payload describing which email to get authentication token for."
         schema:
           type: body
           properties:
@@ -20,9 +20,6 @@ paths:
               type: string
             password:
               type: string
-            sub:
-              type: integer
-              enum: [1212,9898]
       
       responses: 
         '200':
@@ -33,6 +30,8 @@ paths:
                 properties:
                   auth_token: 
                     type: string
+        '403':
+          description: Permission Denied, not a valid email/password combination
 
   /authenticate:
     get:
@@ -48,11 +47,13 @@ paths:
       responses:
         '200':
           description: Successful authentication
+        '400':
+          description: Invalid token
 
-  /getActiveDevices: 
+  /order/createOrder: 
     get: 
-      summary: Get all active devices
-      operationId: getActiveDevices
+      summary: Creates an order 
+      operationId: createOrder
       parameters: 
         - name: Authentication
           in: header
