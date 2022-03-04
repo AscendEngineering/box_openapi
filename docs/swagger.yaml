@@ -18,8 +18,10 @@ paths:
           properties:
             name:
               type: string
+              example: valqari1
             password:
               type: string
+              example: valqari_password
       
       responses: 
         '200':
@@ -30,6 +32,7 @@ paths:
                 properties:
                   auth_token: 
                     type: string
+                    example: 2e765d9b258469d668c760ae49a7cc56
         '403':
           description: Permission Denied, not a valid email/password combination
 
@@ -44,14 +47,48 @@ paths:
           description: Authentication token from /getAuthToken
           schema:
             type: string
+            example: 2e765d9b258469d668c760ae49a7cc56
       responses:
         '200':
           description: Successful authentication
         '400':
           description: Invalid token
 
+
+  /getid:
+    get:
+      summary: Returns the box id given the box name
+      operationId: getid
+      parameters:
+        - name: Authentication
+          in: header
+          required: true
+          description: Authentication token from /getAuthToken
+          schema:
+            type: string
+            example: 2e765d9b258469d668c760ae49a7cc56
+        - name: Box Name
+          in: query
+          required: true
+          description: The name of the box trying to be accessed
+          schema:
+            type: string
+            example: valqari_testbox
+      responses:
+        '200':
+          description: Return of boxid. If not found, -1 returned
+          content:
+            application/json:
+              schema:
+                properties:
+                  boxid:
+                    type: integer
+                    example: 43
+        '403':
+          description: Unauthorized access
+
   /order/createOrder: 
-    get: 
+    post: 
       summary: Creates an order 
       operationId: createOrder
       parameters: 
@@ -60,28 +97,57 @@ paths:
           required: true
           description: Authentication token from /getAuthToken
           schema:
+            type: string
+            example: 2e765d9b258469d668c760ae49a7cc56
+        - name: payload
+          in: body
+          required: true
+          description: Information to create order. Can specify a box name ()
+          schema:
             properties:
               origin:
+                oneOf:
+                  - $ref: '#/components/schemas/box_name'
+                  - $ref: '#/components/schemas/geo_point'
+              dest:
+                oneOf:
+                  - $ref: '#/components/schemas/box_name'
+                  - $ref: '#/components/schemas/geo_point'
+              receiver_email:
                 type: string
+                example: someone@valqari.com
+            
       responses: 
         '200':
-          description: Creates an order on the receiving box 
-            and an order on the sending box. 
-            If the reciever or sending box is empty that is assumed to be a human sender/receiver
+          description: Creates an order. Sender/Receiver can be a human or Valqari box.
           content:
             application/json:
               schema:
                 properties:
-                  auth_code: 
+                  order_id:
+                    type: integer
+                    example: 132
+                  order_auth_code: 
                     type: string
-                  sender:
-                    type: string
-                  recipient:
-                    type: string
+                    example: 378c26d4bc69dcaed5afcf62de9da3e8
+                    description: code needed to make changes to order
                   status:
                     type: string
-                    enum: ["ready","sending","sent","in_transit","receiving","received","stored"]
+                    enum: [ready,sending,sent,in_transit,receiving,received,stored]
                   
 
 
- 
+components:
+  schemas:
+    box_name:
+      type: string
+      example: valqari_testbox
+    geo_point:
+      type: object
+      properties:
+        latitude:
+          type: double
+          example: 41.8397076619582
+        longitude:
+          type: double
+          example: -88.02324480988038
