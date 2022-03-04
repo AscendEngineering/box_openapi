@@ -60,7 +60,9 @@ paths:
           required: true
           description: Authentication token from /getAuthToken
           schema:
-            type: string
+            properties:
+              origin:
+                type: string
       responses: 
         '200':
           description: Creates an order on the receiving box 
@@ -72,46 +74,14 @@ paths:
                 properties:
                   auth_code: 
                     type: string
-                    
+                  sender:
+                    type: string
+                  recipient:
+                    type: string
+                  status:
+                    type: string
+                    enum: ["ready","sending","sent","in_transit","receiving","received","stored"]
+                  
 
 
-
-  /getData: 
-    get: 
-      summary: Get data about a device
-      operationId: getData
-      parameters: 
-        - name: Authentication
-          in: header
-          required: true
-          description: Authentication token from /getAuthToken
-          schema:
-            type: string
-        - in: body
-          required: true
-          description: ""
-          schema:
-            type: body
-            description: Device id and lookback period (how many previous hours of data)
-            properties:
-              device_id:
-                type: string
-                example: West Chicago 5M-South Demo
-              lookback_period:
-                type: integer
-                example: 5
-      responses: 
-        '200':
-          description: data about the device
-          content:
-            application/json:
-              schema:
-                properties:
-                  dataframe: 
-                    type: array
-                    items: 
-                      type: string
-                    example: [columns, [device_id,device_ip,time_of_detection,date_of_detection,device_location,train_direction,train_speed,block_location,finished_passing,block_arrival_time,block_finish_time,issue], index, [1,2,3,4,5,6], data, [West Chicago 5M-South Demo,107.90.30.202,15:26:53,1643241600000,41.80144,-88.23029,Southbound,0.770037792,N/A,false,00:26:34,null,Functional],]
-                    
-                    
  
